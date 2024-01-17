@@ -6,6 +6,9 @@ namespace gdi_PointAndClick
     {
         List<Rectangle> rectangles = new List<Rectangle>();
 
+        Random rnd = new Random();
+
+
         public FrmMain()
         {
             InitializeComponent();
@@ -20,11 +23,13 @@ namespace gdi_PointAndClick
             int h = this.ClientSize.Height;
 
             // Zeichenmittel
-            Brush b = new SolidBrush(Color.Lavender);
 
 
             for (int i = 0; i < rectangles.Count; i++)
             {
+                Color rndFarbe = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+                Brush b = new SolidBrush(rndFarbe);
+
                 g.FillRectangle(b, rectangles[i]);
             }
 
@@ -32,11 +37,38 @@ namespace gdi_PointAndClick
 
         private void FrmMain_MouseClick(object sender, MouseEventArgs e)
         {
+            bool klickaufrec = false;
+
             Point mausposition = e.Location;
 
-            Rectangle r = new Rectangle(mausposition.X, mausposition.Y, 40, 40);
+            int recGroese = rnd.Next(100);
 
-            rectangles.Add(r);  // Kurze Variante: rectangles.Add( new Rectangle(...)  );
+            Rectangle r = new Rectangle(mausposition.X - recGroese / 2, mausposition.Y - recGroese / 2, recGroese, recGroese);
+
+
+            foreach (var rectangle in rectangles)
+            {
+                if (rectangle.Contains(mausposition))
+                {
+                    klickaufrec = true;
+                    break;
+                }
+            }
+
+            if (!klickaufrec)
+            {
+                Color rndFarbe = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+
+                rectangles.Add(r);
+
+                //using (Brush b = new SolidBrush(rndFarbe))
+                //{
+                //    using (Graphics g = CreateGraphics())
+                //    {
+                //        g.FillRectangle(b, r);
+                //    }
+                //}
+            }
 
             Refresh();
         }
